@@ -7,18 +7,18 @@
 
 import Foundation
 
-struct Coordinate: Codable{
+struct Coordinate: Codable {
     let lon: Double
     let lat: Double
 }
 
-struct Main: Codable{
+struct Main: Codable {
     let humidity: Int
     let pressure: Int
     let temp: Double
 }
 
-struct Weather: Codable{
+struct Weather: Codable {
     let id: Int
     let main: String
 }
@@ -30,26 +30,27 @@ struct WeatherData: Codable {
     let weather: [Weather]
     let main: Main
     let name: String
-    
-    var getImage: String{
-        if(weather[0].id < 300){
+
+    var getImage: String {
+        if weather[0].id < 300 {
             return "cloud.bolt.fill"
-        }else if(weather[0].id >= 300 && id < 400){
+        } else if weather[0].id >= 300 && id < 400 {
             return "cloud.rain.fill"
-        }else if(weather[0].id >= 500 && id < 600){
+        } else if weather[0].id >= 500 && id < 600 {
             return "cloud.heavyrain.fill"
-        }else if(weather[0].id >= 600 && id < 700){
+        } else if weather[0].id >= 600 && id < 700 {
             return "cloud.snow.fill"
-        }else if(weather[0].id >= 700 && id < 800){
+        } else if weather[0].id >= 700 && id < 800 {
             return "smoke.fill"
-        }else if(weather[0].id == 800){
+        } else if weather[0].id == 800 {
             return "sun.max.fill"
-        }else{
+        } else {
             return "cloud.fill"
         }
     }
 }
-//{
+
+// {
 //    coord =     {
 //        lat = "28.6667";
 //        lon = "77.2167";
@@ -66,4 +67,4 @@ struct WeatherData: Codable {
 //            main = Haze;
 //        }
 //    );
-//}
+// }

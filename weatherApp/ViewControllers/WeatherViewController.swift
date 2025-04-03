@@ -5,17 +5,16 @@
 //  Created by Bhavik Goyal on 12/12/23.
 //
 
-import UIKit
 import CoreLocation
+import UIKit
 
 class WeatherViewController: UIViewController {
-    
     public var searchData: String = ""
-    
+
     let locationManager = CLLocationManager()
-    
+
     let apiCaller = APICaller()
-    
+
     private var searchView: SearchView = {
         let vc = SearchView()
         vc.locationLabel = "get location"
@@ -26,13 +25,13 @@ class WeatherViewController: UIViewController {
         vc.translatesAutoresizingMaskIntoConstraints = false
         return vc
     }()
-    
+
     private let dataView: DataView = {
         let vc = DataView()
         vc.translatesAutoresizingMaskIntoConstraints = false
         return vc
     }()
-    
+
     private var languageLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -41,7 +40,7 @@ class WeatherViewController: UIViewController {
         label.textColor = .white
         return label
     }()
-    
+
     private var pButton: CustomButton = {
         let button = CustomButton()
         button.setTextValue("My Button")
@@ -50,7 +49,7 @@ class WeatherViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -67,47 +66,47 @@ class WeatherViewController: UIViewController {
         applyConstraints()
         fomatterString()
     }
-    
+
     func setupLocationManager() {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
     }
+
     func fomatterString() {
         languageLabel.text = NSLocalizedString("hello", comment: "")
     }
 }
 
-
-extension WeatherViewController: SearchDelegate{
+extension WeatherViewController: SearchDelegate {
     func LabelDataDelegate(label: String) {
-        self.searchData = label
+        searchData = label
         searchView.searchTextLabel = label
     }
-    
+
     func LocationDelegate() {
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
     }
-    
+
     func pressSearchDelegate() {
-        print(self.searchData)
-        apiCaller.getWeather(with: self.searchData)
+        print(searchData)
+        apiCaller.getWeather(with: searchData)
     }
 }
 
-extension WeatherViewController{
-    private func applyConstraints(){
+extension WeatherViewController {
+    private func applyConstraints() {
         let searchViewConstraints = [
             searchView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             searchView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             searchView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            searchView.heightAnchor.constraint(equalToConstant: 50)
+            searchView.heightAnchor.constraint(equalToConstant: 50),
         ]
         let dataViewConstraints = [
             dataView.topAnchor.constraint(equalTo: searchView.bottomAnchor, constant: 20),
             dataView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             dataView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            dataView.heightAnchor.constraint(equalToConstant: 250)
+            dataView.heightAnchor.constraint(equalToConstant: 250),
         ]
 //        let labelViewConstraints = [
 //            pButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -119,7 +118,7 @@ extension WeatherViewController{
         NSLayoutConstraint.activate(dataViewConstraints)
 //        NSLayoutConstraint.activate(labelViewConstraints)
     }
-    
+
     @objc private func button1() {
         if pButton.pButtonKind == .primary {
             pButton.setKindValue(.secondary)
@@ -129,8 +128,8 @@ extension WeatherViewController{
     }
 }
 
-extension WeatherViewController: CLLocationManagerDelegate{
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+extension WeatherViewController: CLLocationManagerDelegate {
+    func locationManager(_: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         locationManager.stopUpdatingLocation()
         let latitude = location.coordinate.latitude
@@ -139,18 +138,19 @@ extension WeatherViewController: CLLocationManagerDelegate{
         apiCaller.getWeatherCoord(with: longitude, lat: latitude)
         print("Latitude: \(latitude), Longitude: \(longitude)")
     }
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+
+    func locationManager(_: CLLocationManager, didFailWithError error: Error) {
         print("Error: \(error.localizedDescription)")
     }
 }
 
-extension WeatherViewController: APIDelegate{
+extension WeatherViewController: APIDelegate {
     func getSuccess(weatherData: WeatherData) {
         DispatchQueue.main.async {
             self.dataView.configure(with: weatherData)
         }
     }
-    
+
     func getFailure(error: Error) {
         print(error.localizedDescription)
     }
